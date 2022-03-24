@@ -1,3 +1,8 @@
+body{
+    text-align: center;
+    background-color: aqua;
+}
+
 td{
     width: 5px;
     height:5px;
@@ -6,7 +11,12 @@ td{
 table{
     width:500px;
     height: 500px;
+    margin: auto;
 }
 .selected{
      background-color: gray;
+}
+.position{
+    display: inline block;
+    margin: auto;
 }
