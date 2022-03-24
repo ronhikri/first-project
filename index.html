@@ -1,0 +1,35 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="main.css">
+    <title>The Game</title>
+</head>
+
+<body onload="initGame()">
+    <button class="position">game Over</button>
+   <button class="smilie">😀</button>
+   <br>
+   <div class="timer">
+       <h2>The Time From Start Game is:</h2>
+ </div>
+ <br>
+  <div class="button-container">
+        <button onclick="updateTable()">Easy</button>
+        <button onclick="updateMiddle()">middle</button>
+        <button onclick="updateHard()">Hard</button>
+    </div>
+    <br>
+    <button class="haim1">'🧡'</button>
+    <button class="haim2">'🧡'</button>
+    <button class="haim3">'🧡'</button>
+    <br>
+    <table class="board-container"><tbody class="board"></tbody></table>
+    <br>
+    <script src="Game.js"></script>
+
+</body>
+
+</html>

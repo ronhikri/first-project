@@ -1,0 +1,12 @@
+td{
+    width: 5px;
+    height:5px;
+    border:1px solid blue;
+}
+table{
+    width:500px;
+    height: 500px;
+}
+.selected{
+     background-color: gray;
+}
