@@ -103,10 +103,7 @@ function cellclicked(element, i, j) {
                     game.shownCount++;
 
                 } else {
-                    clickNothingNeighbores(i, j);
-                    gBoard[i][j].isShown = true;
-                    game.shownCount++;
-
+                   recurrsia(i,j);
 
 
 
@@ -469,4 +466,27 @@ function localStore(){
     var besting=localStorage.getItem('best');
     var elh2=document.querySelector('.bestscore h2');
     elh2.innerText=`The best score is ${besting}`;
+}
+function recurrsia(i,j){
+    if(i<0||i>=gBoard.length)return;
+    if(j<0||j>=gBoard[0].length)return;
+    if(gBoard[i][j].isShown)return;
+   if(gBoard[i][j].isMine)return;
+   var count=countNeighboreCell(i, j);
+   cellWithNeighbores(i, j, count);
+   gBoard[i][j].isShown=true;
+   game.shownCount++;
+   recurrsia(i,j+1);
+   recurrsia(i,j-1);
+  recurrsia(i+1,j);
+  recurrsia(i+1,j-1);
+  recurrsia(i+1,j+1);
+  recurrsia(i-1,j);
+  recurrsia(i-1,j+1);
+  recurrsia(i-1,j-1);
+
+   
+
+
+
 }
