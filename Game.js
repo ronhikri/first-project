@@ -124,6 +124,7 @@ function cellclicked(element, i, j) {
     }
 }
 function cellRightCilck(element, i, j) {
+    if(!game.isOn)return;
     if (!gBoard[i][j].isShown) {
         toggleCellBoard(i, j);
         if (game.markedCount === game.countBooms - game.countDied && game.shownCount === size - game.countBooms) {
@@ -228,12 +229,14 @@ function startTheGame(i, j) {
 
 }
 function cellWithNeighbores(i, j, count) {
+    if(gBoard[i][j].isShown||gBoard[i][j].isMarked)return;
     getMarkedCell(i, j);
     writeCountNeighboresMines(i, j, count);
 
 
 }
 function clickNothingNeighbores(idx, jdx) {
+    if(gBoard[i][j].isShown||gBoard[i][j].isMarked)return;
     cellWithNeighbores(idx, jdx, 0);
     for (var i = idx - 1; i <= idx + 1; i++) {
         if (i < 0 || i >= gBoard.length) continue;
@@ -475,6 +478,7 @@ function recurrsia(i,j){
     if(i<0||i>=gBoard.length)return;
     if(j<0||j>=gBoard[0].length)return;
     if(gBoard[i][j].isShown)return;
+    if(gBoard[i][j].isMarked)return;
    if(gBoard[i][j].isMine)return;
    var count=countNeighboreCell(i, j);
    cellWithNeighbores(i, j, count);
