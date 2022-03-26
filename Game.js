@@ -387,7 +387,11 @@ function removeHints(i, j) {
     if (gBoard[i][j].isShown) return;
     var cellEl = document.querySelector(`#cell-${i}-${j}`);
     cellEl.classList.remove('hints');
+    if(!gBoard[i][j].isMarked)
     rendercell(i, j, '');
+    else{
+        rendercell(i,j,flag);
+    }
 
 }
 function removeNeighboresHints(idx, jdx) {
