@@ -16,7 +16,13 @@ table{
 .selected{
      background-color: gray;
 }
+.hints{
+    background-color: blue;
+}
 .position{
     display: inline block;
     margin: auto;
+}
+.safeclick{
+    background-color: burlywood;
 }

@@ -8,7 +8,11 @@ var second = 0;
 var millsec = 0;
 var gSetTimeout;
 var gTimer;
-var sizeLoopArr=3;
+var sizeLoopArr = 3;
+var boolHints;
+var boolSafeClick1;
+var boolSafeClick2;
+var boolSafeClick3;
 
 function initGame() {
     var posBth = document.querySelector('.position');
@@ -23,6 +27,10 @@ function initGame() {
     if (gTimer) clearInterval(gTimer);
     second = 0;
     millsec = 0;
+    boolHints=false;
+    boolSafeClick1=false;
+    boolSafeClick2=false;
+    boolSafeClick3=false;
     game = createGgame();
     gBoard = createBoard();
     renderBoard();
@@ -81,44 +89,47 @@ function renderBoard() {
     elMat.innerHTML = strHtml;
 }
 function cellclicked(element, i, j) {
-
     if (!game.isOn) {
         startTheGame(i, j);
     }
-    if (gBoard[i][j].isShown === false) {
-        console.log('h');
-        if (gBoard[i][j].isMine === false) {
-            var countNeigh = countNeighboreCell(i, j);
-            if (countNeigh > 0) {
-                cellWithNeighbores(i, j, countNeigh);
-                gBoard[i][j].isShown = true;
-                game.shownCount++;
+    if (!boolHints) {
+        if (gBoard[i][j].isShown === false) {
+            console.log('h');
+            if (gBoard[i][j].isMine === false) {
+                var countNeigh = countNeighboreCell(i, j);
+                if (countNeigh > 0) {
+                    cellWithNeighbores(i, j, countNeigh);
+                    gBoard[i][j].isShown = true;
+                    game.shownCount++;
+
+                } else {
+                    clickNothingNeighbores(i, j);
+                    gBoard[i][j].isShown = true;
+                    game.shownCount++;
+
+
+
+
+
+
+                }
+                if (game.markedCount === game.countBooms - game.countDied && game.shownCount === size - game.countBooms) {
+                    victoryGame();
+                }
 
             } else {
-                clickNothingNeighbores(i, j);
-                gBoard[i][j].isShown = true;
-                game.shownCount++;
-
-
-
-
-
+                diedLife(i, j);
 
             }
-            if (game.markedCount === game.countBooms-game.countDied && game.shownCount === size - game.countBooms) {
-                victoryGame();
-            }
-
-        } else {
-            diedLife(i,j);
-
         }
+    } else {
+        checkHimts(i, j);
     }
 }
 function cellRightCilck(element, i, j) {
     if (!gBoard[i][j].isShown) {
         toggleCellBoard(i, j);
-        if (game.markedCount === game.countBooms-game.countDied && game.shownCount === size - game.countBooms) {
+        if (game.markedCount === game.countBooms - game.countDied && game.shownCount === size - game.countBooms) {
             victoryGame();
 
         }
@@ -177,14 +188,14 @@ function secTimer() {
     timeEl.innerText = `the time from start game is ${second}: ${millsec}`
 
 }
-function createPositions(idx,jdx){
-    var arr=[];
-    for(var i=0;i<gBoard.length;i++){
-        for(var j=0;j<gBoard[0].length;j++){
-            if(i===idx&&j===jdx)continue;
-            pos={
-                i:i,
-                j:j
+function createPositions(idx, jdx) {
+    var arr = [];
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            if (i === idx && j === jdx) continue;
+            pos = {
+                i: i,
+                j: j
             }
             arr.push(pos);
         }
@@ -192,12 +203,12 @@ function createPositions(idx,jdx){
     return arr;
 }
 function getRandomMine(idx, jdx) {
-    var arr=createPositions(idx,jdx);
-    for(var i=0;i<sizeLoopArr;i++){
-    var index=getRandomInt(0,arr.length);
-    var pos=arr[index];
-    gBoard[pos.i][pos.j].isMine=true;
-    arr.splice(index,1);
+    var arr = createPositions(idx, jdx);
+    for (var i = 0; i < sizeLoopArr; i++) {
+        var index = getRandomInt(0, arr.length);
+        var pos = arr[index];
+        gBoard[pos.i][pos.j].isMine = true;
+        arr.splice(index, 1);
     }
 }
 function getMarkedCell(i, j) {
@@ -288,6 +299,7 @@ function victoryGame() {
     var posBth = document.querySelector('.position');
     posBth.style.display = 'block';
     posBth.innerText = 'victory';
+    localStore();
     gSetTimeout = setTimeout(resertFunc, 5000);
 
 }
@@ -297,23 +309,23 @@ function resertFunc() {
 function updateTable() {
     vSize = 4;
     size = 16
-    sizeLoopArr=3;
+    sizeLoopArr = 3;
     initGame();
 
 }
 function updateMiddle() {
     vSize = 8;
     size = 64;
-    sizeLoopArr=12;
+    sizeLoopArr = 12;
     initGame();
 }
 function updateHard() {
     vSize = 12;
     size = 144;
-    sizeLoopArr=15;
+    sizeLoopArr = 15;
     initGame();
 }
-function diedLife(i,j) {
+function diedLife(i, j) {
     game.countDied++;
     switch (game.countDied) {
         case 1:
@@ -331,7 +343,130 @@ function diedLife(i,j) {
             break
 
     }
-   gBoard[i][j].isShown=true;
-    rendercell(i,j,moqesh);
+    gBoard[i][j].isShown = true;
+    rendercell(i, j, moqesh);
 
+}
+function makeHints() {
+    boolHints = true;
+}
+function checkHimts(i, j) {
+    if (gBoard[i][j].isShown) return;
+    checkCellHints(i, j);
+    checkNeighborsHints(i, j);
+    setTimeout(removeHintss, 1000, i, j);
+}
+function checkNeighborsHints(idx, jdx) {
+    for (var i = idx - 1; i <= idx + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue;
+        for (var j = jdx - 1; j <= jdx + 1; j++) {
+            if (j < 0 || j >= gBoard[0].length) continue;
+            if (i === idx && j === jdx) continue;
+            checkCellHints(i, j);
+        }
+    }
+
+
+}
+function checkCellHints(i, j) {
+    if (gBoard[i][j].isShown) return;
+    var cellEl = document.querySelector(`#cell-${i}-${j}`);
+    cellEl.classList.add('hints');
+    if (gBoard[i][j].isMine) {
+        rendercell(i, j, moqesh);
+    } else {
+        rendercell(i, j, gBoard[i][j].mineAroundCount);
+    }
+
+
+}
+function removeHintss(i, j) {
+    removeHints(i, j);
+    removeNeighboresHints(i, j);
+    boolHints = false;
+
+}
+function removeHints(i, j) {
+    if (gBoard[i][j].isShown) return;
+    var cellEl = document.querySelector(`#cell-${i}-${j}`);
+    cellEl.classList.remove('hints');
+    rendercell(i, j, '');
+
+}
+function removeNeighboresHints(idx, jdx) {
+    for (var i = idx - 1; i <= idx + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue;
+        for (var j = jdx - 1; j <= jdx + 1; j++) {
+            if (j < 0 || j >= gBoard[0].length) continue;
+            if (i === idx && j === jdx) continue;
+            removeHints(i, j);
+        }
+    }
+
+}
+function safeclickone() {
+    if (!boolSafeClick1) {
+        makeSafeCell();
+        boolSafeClick1 = true;
+    }
+
+}
+function makeSafeCell() {
+    var res = createEmptyCells();
+    var index = getRandomInt(0, res.length);
+    var pos = res[index];
+    var cellEl = document.querySelector(`#cell-${pos.i}-${pos.j}`);
+    cellEl.classList.add('safeclick');
+    setTimeout(removeSafe, 2000, pos.i, pos.j);
+
+
+}
+function createEmptyCells() {
+    var res = [];
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            if (gBoard[i][j].isMine || gBoard[i][j].isShown) continue;
+            var pos = {
+                i: i,
+                j: j
+            }
+            res.push(pos);
+        }
+    }
+    return res;
+}
+function removeSafe(i, j) {
+    var cellEl = document.querySelector(`#cell-${i}-${j}`);
+    cellEl.classList.remove('safeclick');
+
+}
+function safeclicktwo() {
+    if (!boolSafeClick2) {
+        makeSafeCell();
+        boolSafeClick2 = true;
+
+    }
+}
+function safeclickthree() {
+    if (!boolSafeClick3) {
+        makeSafeCell();
+        boolSafeClick3 = true;
+
+    }
+
+}
+function localStore(){
+    var bestScore=localStorage.getItem('best');
+    if(bestScore){
+        if(second<=bestScore){
+            localStorage.setItem('best',second);
+
+        }
+    }else{
+        localStorage.setItem('best',second);
+
+    }
+    var besting=localStorage.getItem('best');
+    var elh2=document.querySelector('.bestscore h2');
+    elh2.innerText=`The best score is ${besting}`;
 }
