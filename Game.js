@@ -476,6 +476,8 @@ function recurrsia(i,j){
    cellWithNeighbores(i, j, count);
    gBoard[i][j].isShown=true;
    game.shownCount++;
+   if(count>0)return;
+   else{
    recurrsia(i,j+1);
    recurrsia(i,j-1);
   recurrsia(i+1,j);
@@ -484,6 +486,7 @@ function recurrsia(i,j){
   recurrsia(i-1,j);
   recurrsia(i-1,j+1);
   recurrsia(i-1,j-1);
+   }
 
    
 
